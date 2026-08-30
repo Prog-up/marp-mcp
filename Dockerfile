@@ -6,6 +6,7 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --no-cache-dir -U pip setuptools wheel msgpack
 RUN pip install --no-cache-dir mcpo
+RUN pip uninstall -y pip setuptools wheel
 
 # ---- Final Stage ----
 FROM node:22-bookworm-slim
