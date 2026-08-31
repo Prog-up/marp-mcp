@@ -5,7 +5,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y python3 python3-v
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --no-cache-dir -U pip setuptools wheel msgpack
-RUN pip install --no-cache-dir mcpo
+RUN pip install --no-cache-dir "mcpo==0.0.20" "mcp<2.0.0"
 RUN pip uninstall -y pip setuptools wheel
 
 # ---- Final Stage ----
@@ -36,6 +36,9 @@ RUN echo "Installed @masaki39/marp-mcp version:" && npm list -g @masaki39/marp-m
 RUN useradd -m -s /bin/bash marpuser
 USER marpuser
 WORKDIR /home/marpuser
+
+# Set HOME explicitly so npm/npx writes cache to the writable user home (fixes EACCES)
+ENV HOME=/home/marpuser
 
 # Set environment variables for Chromium/Puppeteer
 ENV CHROME_PATH=/usr/bin/chromium
