@@ -16,21 +16,23 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
     python3 \
     chromium \
     curl \
+    fonts-liberation \
+    fonts-noto-color-emoji \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy virtual environment from builder
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Install @masaki39/marp-mcp globally, update, and completely remove npm cache in ONE layer
+# Install @marp-team/marp-cli and @masaki39/marp-mcp globally, update, and completely remove npm cache in ONE layer
 RUN npm install -g npm@latest && \
-    npm install -g @masaki39/marp-mcp@latest && \
+    npm install -g @marp-team/marp-cli @masaki39/marp-mcp@latest && \
     npm update -g && \
     npm cache clean --force && \
     rm -rf /root/.npm
 
-# Log the resolved marp-mcp version at build time
-RUN echo "Installed @masaki39/marp-mcp version:" && npm list -g @masaki39/marp-mcp || true
+# Log the resolved versions at build time
+RUN echo "Installed packages:" && npm list -g --depth=0 || true
 
 # Create and switch to non-root user
 RUN useradd -m -s /bin/bash marpuser
